@@ -37,10 +37,10 @@ target_sources(libraries
     lib/Queue.cppm
 )
 
+target_link_libraries(libraries PUBLIC interfaces)
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
-    interfaces
     libraries
 )
