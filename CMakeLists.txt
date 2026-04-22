@@ -15,4 +15,32 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8 /W4")
 endif()
 
+add_library(interfaces STATIC)
+target_sources(interfaces
+    PUBLIC
+    FILE_SET CXX_MODULES
+    FILES
+    interface/IEnumerator.cppm
+    interface/IEnumerable.cppm
+    interface/ICollection.cppm
+)
+
+add_library(libraries STATIC)
+target_sources(libraries
+    PUBLIC
+    FILE_SET CXX_MODULES
+    FILES
+    lib/List.cppm
+    lib/HashSet.cppm
+    lib/Dictionary.cppm
+    lib/Stack.cppm
+    lib/Queue.cppm
+)
+
+
 add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    interfaces
+    libraries
+)
