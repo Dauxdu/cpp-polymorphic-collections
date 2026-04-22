@@ -70,7 +70,7 @@ class HashSet<T> : ICollection<T> {
 > [!NOTE]
 > Для элементов хеш-таблицы необходимо задать хеш-функцию и компаратор.
 >
-> В C# по дизайну метод [`GetHashCode`](https://learn.microsoft.com/en-us/dotnet/api/system.object.gethashcode) есть у любого объекта, а компаратор [IEqualityComparer<T>](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iequalitycomparer-1) может быть задан с помощью соответствующей [перегрузки конструктора](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1.-ctor?view=net-10.0#system-collections-generic-hashset-1-ctor%28system-collections-generic-iequalitycomparer%28%28-0%29%29%29).
+> В C# по дизайну метод [`GetHashCode`](https://learn.microsoft.com/en-us/dotnet/api/system.object.gethashcode) есть у любого объекта, а компаратор [`IEqualityComparer<T>`](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iequalitycomparer-1) может быть задан с помощью соответствующей [перегрузки конструктора](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.hashset-1.-ctor?view=net-10.0#system-collections-generic-hashset-1-ctor%28system-collections-generic-iequalitycomparer%28%28-0%29%29%29).
 >
 > При реализации на C++ выберите один из двух вариантов:
 >
