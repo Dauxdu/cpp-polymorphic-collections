@@ -13,17 +13,15 @@ private:
 	class ListEnumerator final : public IEnumerator<T>
 	{
 	private:
-		T* _current = nullptr;
+		T *_current = nullptr;
 
 	public:
 		explicit ListEnumerator() = default;
 
-
-		explicit ListEnumerator(const T* source_ptr) noexcept
+		explicit ListEnumerator(const T *source_ptr) noexcept
 		{
 			_current = source_ptr;
 		}
-
 
 		bool MoveNext() override
 		{
@@ -34,12 +32,11 @@ private:
 			else
 			{
 				++_current;
-				return true
+				return true;
 			}
 		}
 
-
-		T& Current() override
+		T &Current() override
 		{
 			if (_current == nullptr)
 			{
@@ -48,8 +45,7 @@ private:
 			return *_current;
 		}
 
-
-		const T& Current() const override
+		const T &Current() const override
 		{
 			if (_current == nullptr)
 			{
@@ -67,53 +63,47 @@ public:
 		return _collection.size();
 	}
 
-
-	void Add(const T& item) override
+	void Add(const T &item) override
 	{
 		_collection.push_back(item);
 	}
-
 
 	void Clear() override
 	{
 		_collection.clear();
 	}
 
-
-	bool Contains(const T& item) const override
+	bool Contains(const T &item) const override
 	{
-		return std::find(_collection.begin(), _collection.end(), T item) != _collection.end()
+		return std::find(_collection.begin(), _collection.end(), item) != _collection.end();
 	}
 
-
-	[[nodiscard]] bool Remove(const T& item) override
+	[[nodiscard]] bool Remove(const T &item) override
 	{
-		...;
+		//...
 	}
-
 
 	std::size_t Capacity() const
 	{
 		return _collection.capacity();
 	}
 
-
 	void SetCapacity(const std::size_t capacity)
 	{
 		_collection.reserve(capacity);
 	}
 
-
-	T& operator[](const std::size_t& index)
+	T &operator[](const std::size_t &index)
 	{
 		return &_collection[index];
 	}
 
-	const T& operator[](const std::size_t& index) const
+	const T &operator[](const std::size_t &index) const
 	{
 		return _collection[index];
 	}
 };
+
 // int Count(); - size_type size() const noexept;
 // void Add(T item); - void push_back(T item)
 // void Clear(); - void clear()
