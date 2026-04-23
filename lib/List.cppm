@@ -55,7 +55,7 @@ private:
 		}
 	};
 
-	ListEnumerator iterator();
+	ListEnumerator iterator;
 
 public:
 	std::size_t Count() const override
@@ -80,7 +80,7 @@ public:
 
 	[[nodiscard]] bool Remove(const T &item) override
 	{
-		//...
+		return std::erase(_collection, item) != 0;
 	}
 
 	std::size_t Capacity() const
@@ -101,6 +101,18 @@ public:
 	const T &operator[](const std::size_t &index) const
 	{
 		return _collection[index];
+	}
+
+
+	void Insert(const std::size_t& index, const T& item)
+	{
+		_collection.insert(_collection.begin + index, item);
+	}
+
+
+	void RemoveAt(const std::size_t& index)
+	{
+		_collection.erase(index);
 	}
 };
 
