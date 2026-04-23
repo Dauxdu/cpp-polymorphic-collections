@@ -10,7 +10,7 @@ class Queue : public ICollection<T>
 private:
     std::queue<T> _collection;
 
-    class QueueEnumerator : public IEnumerator<T>
+    class QueueEnumerator final : public IEnumerator<T>
     {
     private:
         std::vector<T> _items;
