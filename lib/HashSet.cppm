@@ -1,10 +1,58 @@
 export module HashSet;
 
-// int Count();  - size_type size() const noexept;
-// void Add(T item); - std::pair <iterator, bool> insert(value_type&& value);
-// void Clear();     - clear() noexept;
-// bool Contains(T item); bool contains(key& key) const;
-// bool Remove(T item); - size_type erase(key& key)
+import std;
+import IEnumerator;
+import ICollection;
 
-// int Capacity();   - size_type bucket_count() const;
-// void SetCapacity(int capacity);  -  void reserve(size_type count);
+export template <typename T, typename Hash = std::hash<T>, typename KeyEqual = std::equal_to<T>>
+class HashSet : public ICollection<T>
+{
+private:
+    std::unordered_set<T, Hash, KeyEqual> _collection;
+
+    class HashSetEnumerator final : public IEnumerator<T>
+    {
+        // ...
+    };
+
+public:
+    std::unique_ptr<IEnumerator<T>> GetEnumerator() override
+    {
+        return std::make_unique<HashSetEnumerator>(_collection);
+    }
+
+    void Add(const T &item) override
+    {
+        _collection.insert(item);
+    }
+
+    bool Remove(const T &item) override
+    {
+        return _collection.erase(item) > 0;
+    }
+
+    void Clear() override
+    {
+        _collection.clear();
+    }
+
+    [[nodiscard]] std::size_t Count() const override
+    {
+        return _collection.size();
+    }
+
+    bool Contains(const T &item) const override
+    {
+        return _collection.find(item) != _collection.end();
+    }
+
+    [[nodiscard]] std::size_t Capacity() const
+    {
+        return _collection.bucket_count();
+    }
+
+    void SetCapacity(std::size_t capacity)
+    {
+        _collection.reserve(capacity);
+    }
+};
