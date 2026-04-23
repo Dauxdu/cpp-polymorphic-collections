@@ -10,11 +10,11 @@ public:
     virtual ~ICollection() = default;
 
     /// @brief Добавляет элемент в коллекцию
-    virtual void Add(const T &_item) = 0;
+    virtual void Add(const T &item) = 0;
 
     /// @brief Удаляет первое вхождение элемента
     /// @return true, если элемент был найден и удалён
-    virtual bool Remove(const T &_item) = 0;
+    virtual bool Remove(const T &item) = 0;
 
     /// @brief Удаляет все элементы
     virtual void Clear() = 0;
@@ -24,5 +24,5 @@ public:
 
     /// @brief Проверяет наличие элемента
     /// @note Требует, чтобы T поддерживал operator==
-    virtual bool Contains(const T &_item) const = 0;
+    virtual bool Contains(const T &item) const = 0;
 };
