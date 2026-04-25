@@ -100,7 +100,7 @@ public:
     /**
      * @brief Количество элементов в очереди.
      */
-    [[nodiscard]] std::size_t Count() override
+    [[nodiscard]] std::size_t Count() const override
     {
         return _collection.size();
     }
