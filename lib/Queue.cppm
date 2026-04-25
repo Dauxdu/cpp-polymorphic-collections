@@ -25,65 +25,80 @@ private:
     class QueueEnumerator final : public IEnumerator<T>
     {
     private:
-        std::vector<T> _items;
-        std::ptrdiff_t _index = -1;
+        std::queue<T>::container_type::const_iterator _it;
+        std::queue<T>::container_type::const_iterator _end;
 
-        bool IsValid() const
+        enum class State
         {
-            return _index >= 0 && _index < std::ssize(_items);
-        }
+            BeforeFirst,
+            Valid,
+            AfterLast
+        } _state = State::BeforeFirst;
+
+        bool IsValid() const { return _state == State::Valid; }
 
     public:
         /**
          * @brief Конструктор перечислителя.
-         * @param queue Исходная очередь, из которой создаётся снимок.
+         * @param queue Исходная очередь.
          */
-        explicit QueueEnumerator(const std::queue<T> &queue)
-        {
-            std::queue<T> temp = queue;
-            while (!temp.empty())
-            {
-                _items.push_back(std::move(temp.front()));
-                temp.pop();
-            }
-        }
+        explicit QueueEnumerator(const std::queue<T> &queue) : _it(queue.c.begin()), _end(queue.c.end()) {}
 
         /**
-         * @brief Переходит к следующему элементу в перечислении.
-         * @return true, если следующий элемент существует, иначе false.
+         * @brief Переходит к следующему элементу.
+         * @return true, если удалось перейти, false если достигнут конец.
          */
         bool MoveNext() override
         {
-            ++_index;
-            return _index < std::ssize(_items);
+            switch (_state)
+            {
+            case State::BeforeFirst:
+                if (_it != _end)
+                {
+                    _state = State::Valid;
+                    return true;
+                }
+                _state = State::AfterLast;
+                return false;
+
+            case State::Valid:
+                ++_it;
+                if (_it != _end)
+                {
+                    return true;
+                }
+                _state = State::AfterLast;
+
+            case State::AfterLast:
+                return false;
+            }
+            return false;
         }
 
         /**
-         * @brief Получает текущий элемент в перечислении.
-         * @return Ссылка на текущий элемент.
-         * @throw std::out_of_range Если перечисление не находится в допустимой позиции.
+         * @brief Возвращает текущий элемент (non-const версия).
+         * @throw std::logic_error если итератор не в валидном состоянии.
          */
         T &Current() override
         {
             if (!IsValid())
             {
-                throw std::logic_error("QueueEnumerator::Current: invalid position");
+                throw std::logic_error("QueueEnumerator::Current: enumerator not positioned");
             }
-            return _items[static_cast<std::size_t>(_index)];
+            return const_cast<T &>(*_it);
         }
 
         /**
-         * @brief Получает текущий элемент в перечислении (константная версия).
-         * @return Константная ссылка на текущий элемент.
-         * @throw std::out_of_range Если перечисление не находится в допустимой позиции.
+         * @brief Возвращает текущий элемент (const версия).
+         * @throw std::logic_error если итератор не в валидном состоянии.
          */
         const T &Current() const override
         {
             if (!IsValid())
             {
-                throw std::logic_error("QueueEnumerator::Current: invalid position");
+                throw std::logic_error("QueueEnumerator::Current: enumerator not positioned");
             }
-            return _items[static_cast<std::size_t>(_index)];
+            return *_it;
         }
     };
 
