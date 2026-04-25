@@ -12,7 +12,66 @@ private:
 
     class HashSetEnumerator final : public IEnumerator<T>
     {
-        // ...
+    private:
+        std::unordered_set<T, Hash, KeyEqual>::const_iterator _it;
+        std::unordered_set<T, Hash, KeyEqual>::const_iterator _end;
+
+        enum class State
+        {
+            BeforeFirst,
+            Valid,
+            AfterLast
+        } _state = State::BeforeFirst;
+
+        bool IsValid() const
+        {
+            return _state == State::Valid;
+        }
+
+    public:
+        explicit HashSetEnumerator(const std::unordered_set<T, Hash, KeyEqual> &set) : _it(set.begin()), _end(set.end()) {}
+
+        bool MoveNext() override
+        {
+            switch (_state)
+            {
+            case State::BeforeFirst:
+                if (_it != _end)
+                {
+                    _state = State::Valid;
+                    return true;
+                }
+                _state = State::AfterLast;
+                return false;
+
+            case State::Valid:
+                ++_it;
+                if (_it != _end)
+                {
+                    return true;
+                }
+                _state = State::AfterLast;
+                return false;
+
+            case State::AfterLast:
+                return false;
+            }
+            return false;
+        }
+
+        const T &Current() const override
+        {
+            if (!IsValid())
+            {
+                throw std::logic_error("HashSetEnumerator::Current: enumerator not positioned");
+            }
+            return *_it;
+        }
+
+        T &Current() override
+        {
+            return const_cast<T &>(std::as_const(*this).Current());
+        }
     };
 
 public:
