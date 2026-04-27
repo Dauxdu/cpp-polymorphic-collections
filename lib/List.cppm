@@ -10,75 +10,10 @@ class List final : public ICollection<T>
 private:
 	std::vector<T> _collection;
 
-	class ListEnumerator final : public IEnumerator<T>
-	{
-	private:
-		std::vector<T>::const_iterator _current;
-		std::vector<T>::const_iterator _end;
-
-		enum class State
-		{
-			BeforeFirst,
-			Valid,
-			AfterLast
-		} _state = State::BeforeFirst;
-
-		bool IsValid() const { return _state == State::Valid; }
-
-	public:
-		explicit ListEnumerator(std::vector<T>::const_iterator begin, std::vector<T>::const_iterator end) : _current(begin), _end(end) {}
-
-		bool MoveNext() override
-		{
-			switch (_state)
-			{
-			case State::BeforeFirst:
-				if (_current != _end)
-				{
-					_state = State::Valid;
-					return true;
-				}
-				_state = State::AfterLast;
-				return false;
-
-			case State::Valid:
-				++_current;
-				if (_current != _end)
-				{
-					return true;
-				}
-				_state = State::AfterLast;
-				[[fallthrough]];
-
-			case State::AfterLast:
-				return false;
-			}
-			return false; // unreachable
-		}
-
-		T &Current() override
-		{
-			if (!IsValid())
-			{
-				throw std::logic_error("ListEnumerator::Current: invalid position");
-			}
-			return const_cast<T &>(*_current);
-		}
-
-		const T &Current() const override
-		{
-			if (!IsValid())
-			{
-				throw std::logic_error("ListEnumerator::Current: invalid position");
-			}
-			return *_current;
-		}
-	};
-
 public:
-	std::unique_ptr<IEnumerator<T>> GetEnumerator() override
+	std::unique_ptr<IEnumerator<T>> GetEnumerator() const override
 	{
-		return std::make_unique<ListEnumerator>(_collection.begin(), _collection.end());
+		return std::make_unique<List>(_collection.begin(), _collection.end());
 	}
 
 	std::size_t Count() const override

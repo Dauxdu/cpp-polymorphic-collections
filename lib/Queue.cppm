@@ -17,99 +17,14 @@ class Queue : public IEnumerable<T>
 private:
     std::queue<T> _collection;
 
-    /**
-     * @brief Вложенный класс-перечислитель для обхода элементов очереди.
-     * @details Наследует IEnumerator<T>. Создаёт внутреннюю копию элементов
-     *          в момент создания, обеспечивая семантику снимка.
-     */
-    class QueueEnumerator final : public IEnumerator<T>
-    {
-    private:
-        std::queue<T>::container_type::const_iterator _it;
-        std::queue<T>::container_type::const_iterator _end;
-
-        enum class State
-        {
-            BeforeFirst,
-            Valid,
-            AfterLast
-        } _state = State::BeforeFirst;
-
-        bool IsValid() const { return _state == State::Valid; }
-
-    public:
-        /**
-         * @brief Конструктор перечислителя.
-         * @param queue Исходная очередь.
-         */
-        explicit QueueEnumerator(const std::queue<T> &queue) : _it(queue.c.begin()), _end(queue.c.end()) {}
-
-        /**
-         * @brief Переходит к следующему элементу.
-         * @return true, если удалось перейти, false если достигнут конец.
-         */
-        bool MoveNext() override
-        {
-            switch (_state)
-            {
-            case State::BeforeFirst:
-                if (_it != _end)
-                {
-                    _state = State::Valid;
-                    return true;
-                }
-                _state = State::AfterLast;
-                return false;
-
-            case State::Valid:
-                ++_it;
-                if (_it != _end)
-                {
-                    return true;
-                }
-                _state = State::AfterLast;
-
-            case State::AfterLast:
-                return false;
-            }
-            return false;
-        }
-
-        /**
-         * @brief Возвращает текущий элемент (non-const версия).
-         * @throw std::logic_error если итератор не в валидном состоянии.
-         */
-        T &Current() override
-        {
-            if (!IsValid())
-            {
-                throw std::logic_error("QueueEnumerator::Current: enumerator not positioned");
-            }
-            return const_cast<T &>(*_it);
-        }
-
-        /**
-         * @brief Возвращает текущий элемент (const версия).
-         * @throw std::logic_error если итератор не в валидном состоянии.
-         */
-        const T &Current() const override
-        {
-            if (!IsValid())
-            {
-                throw std::logic_error("QueueEnumerator::Current: enumerator not positioned");
-            }
-            return *_it;
-        }
-    };
-
 public:
     /**
      * @brief Получает перечислитель для обхода коллекции.
      * @return Умный указатель на IEnumerator<T>.
      */
-    [[nodiscard]] std::unique_ptr<IEnumerator<T>> GetEnumerator() override
+    [[nodiscard]] std::unique_ptr<IEnumerator<T>> GetEnumerator() const override
     {
-        return std::make_unique<QueueEnumerator>(_collection);
+        return std::make_unique<Queue>(_collection);
     }
 
     /**

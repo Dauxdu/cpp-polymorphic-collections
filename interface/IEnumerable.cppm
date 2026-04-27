@@ -10,5 +10,5 @@ public:
     virtual ~IEnumerable() = default;
 
     /// @brief Получает итератор для обхода коллекции
-    virtual std::unique_ptr<IEnumerator<T>> GetEnumerator() = 0;
+    virtual std::unique_ptr<IEnumerator<T>> GetEnumerator() const = 0;
 };
