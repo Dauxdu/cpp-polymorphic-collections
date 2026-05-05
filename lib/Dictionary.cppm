@@ -1,11 +1,75 @@
 export module Dictionary;
 
-// int Count(); - size_t size() const;
-// void Add(T item); - template < class T > std::pair<it, bool> insert ( T&& value);
-// void Clear(); - void clear();
-// bool Contains(T item); - bool contains (const Key& key) const;
-// bool Remove(T item); - size_t erase(const Key& key);
+import std;
+import IEnumerator;
+import ICollection;
 
-// int Capacity(); std::size_t bucket_count() const noexcept {};
-// void SetCapacity(int capacity); void reserve(std::size_t size) {};
-// TValue this[TKey key] { get; set; } TValue& operator[](const TKey& key) {}; const TValue& operator[](const TKey& key) {}; TValue& operator[](TKey&& key) {}
+export template <typename TKey, typename TValue, typename Hash = std::hash<TKey>, typename KeyEqual = std::equal_to<TKey>>
+class Dictionary final : public ICollection<std::pair<const TKey, TValue>>
+{
+private:
+    std::unordered_map<TKey, TValue, Hash, KeyEqual> _map;
+
+public:
+    bool Contains(const TKey &key) const
+    {
+        return _map.contains(key);
+    }
+
+    void Add(const std::pair<TKey, TValue> &item) override
+    {
+        if (Contains(item->first))
+        {
+            return;
+        }
+        _map.insert(item);
+    }
+
+    bool Remove(const TKey &key) override
+    {
+        if (!Contains(key))
+        {
+            return false;
+        }
+        _map.erase(key);
+        return true;
+    }
+
+    void Clear() override
+    {
+        _map.clear();
+    }
+
+    std::size_t Count() const override
+    {
+        return _map.size();
+    }
+
+    std::size_t Capacity() const noexcept
+    {
+        return _map.bucket_count();
+    }
+
+    void SetCapacity(const std::size_t &capacity)
+    {
+        _map.reserve(capacity);
+    }
+
+    TValue &operator[](const TKey &key) const
+    {
+        if (!Contains(key))
+        {
+            throw std::out_of_range("Invalid key");
+        }
+        return _map[key];
+    }
+
+    TValue &operator[](const TKey &key)
+    {
+        if (!Contains(key))
+        {
+            throw std::out_of_range("Invalid key");
+        }
+        return _map[key];
+    }
+};
