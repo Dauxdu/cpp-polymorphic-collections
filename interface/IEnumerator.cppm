@@ -1,11 +1,9 @@
 export module IEnumerator;
 
-export template <typename T>
+export template <typename TValue>
 class IEnumerator
 {
 public:
-    using value_type = T;
-
     virtual ~IEnumerator() = default;
 
     /// @brief Перемещает итератор на следующий элемент
@@ -14,8 +12,8 @@ public:
 
     /// @brief Возвращает текущий элемент (не продвигает итератор)
     /// @throw std::runtime_error если итератор не валиден
-    virtual T &Current() = 0;
+    virtual TValue &Current() = 0;
 
     /// @brief Const-версия Current()
-    virtual const T &Current() const = 0;
+    virtual const TValue &Current() const = 0;
 };
