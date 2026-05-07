@@ -30,6 +30,7 @@ target_sources(libraries
     PUBLIC
     FILE_SET CXX_MODULES
     FILES
+    lib/DictionaryEnumerator.cppm
     lib/List.cppm
     lib/HashSet.cppm
     lib/Dictionary.cppm
